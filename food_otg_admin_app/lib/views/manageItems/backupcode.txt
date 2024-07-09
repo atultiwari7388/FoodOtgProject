@@ -1,0 +1,66 @@
+  // Widget _buildSizesSection() {
+  //   return _isSizesAvailable
+  //       ? Column(
+  //           crossAxisAlignment: CrossAxisAlignment.start,
+  //           children: [
+  //             const Text(
+  //               'Sizes:',
+  //               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+  //             ),
+  //             SizedBox(
+  //               height: 200, // Adjust the height according to your needs
+  //               child: StreamBuilder<QuerySnapshot>(
+  //                 stream: FirebaseFirestore.instance
+  //                     .collection('sizes')
+  //                     .snapshots(),
+  //                 builder: (context, snapshot) {
+  //                   if (snapshot.hasData) {
+  //                     final sizesDocs = snapshot.data!.docs;
+  //                     final titles = <String>[];
+  //                     for (var sizeDoc in sizesDocs) {
+  //                       final sizeData = sizeDoc.data() as Map<String, dynamic>;
+  //                       if (sizeData.containsKey('items')) {
+  //                         final sizeItemsRaw = sizeData['items'] as List?;
+  //                         if (sizeItemsRaw != null) {
+  //                           final sizeItems =
+  //                               sizeItemsRaw.cast<Map<String, dynamic>>();
+  //                           for (var sizeItem in sizeItems) {
+  //                             final title = sizeItem['title'] as String?;
+  //                             if (title != null &&
+  //                                 title.isNotEmpty &&
+  //                                 !titles.contains(title)) {
+  //                               titles.add(title);
+  //                             }
+  //                           }
+  //                         }
+  //                       }
+  //                     }
+  //                     return ListView.builder(
+  //                       itemCount: titles.length,
+  //                       itemBuilder: (context, index) {
+  //                         final size = titles[index];
+  //                         return CheckboxListTile(
+  //                           title: Text(size),
+  //                           value: _selectedSizes.contains(size),
+  //                           onChanged: (value) {
+  //                             setState(() {
+  //                               if (value!) {
+  //                                 _selectedSizes.add(size);
+  //                               } else {
+  //                                 _selectedSizes.remove(size);
+  //                               }
+  //                             });
+  //                           },
+  //                         );
+  //                       },
+  //                     );
+  //                   } else {
+  //                     return const Center(child: CircularProgressIndicator());
+  //                   }
+  //                 },
+  //               ),
+  //             ),
+  //           ],
+  //         )
+  //       : Container(); // Empty container if sizes are not available
+  // }
