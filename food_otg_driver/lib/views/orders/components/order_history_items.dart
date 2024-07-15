@@ -306,7 +306,7 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
                     if (widget.status == 1)
                       Center(
                         child: ElevatedButton(
-                          onPressed: () => _acceptOrder(),
+                          onPressed: () => showDeliveryTimeDialog(),
                           child: Text(
                             "Accept",
                             style: appStyle(16, kWhite, FontWeight.normal),
@@ -419,13 +419,60 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
     );
   }
 
-  void _acceptOrder() async {
+  Future<void> showDeliveryTimeDialog() async {
+    final TextEditingController _controller = TextEditingController();
+    bool isButtonDisabled = true;
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Enter Delivery Time'),
+          content: TextField(
+            controller: _controller,
+            keyboardType: TextInputType.number,
+            onChanged: (value) {
+              setState(() {
+                isButtonDisabled = value.isEmpty;
+              });
+            },
+            decoration: const InputDecoration(
+              hintText: 'Delivery Time in minutes (10)',
+            ),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+                minimumSize: Size(120.w, 42.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0.r),
+                ),
+              ),
+              onPressed: isButtonDisabled
+                  ? null
+                  : () {
+                      String deliveryTime = _controller.text;
+                      Navigator.of(context).pop();
+                      _acceptOrder(deliveryTime);
+                    },
+              child: const Text('Continue'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _acceptOrder(deliveryTime) async {
     try {
       // Update values in the orders collection
       await FirebaseFirestore.instance
           .collection('orders')
           .doc(widget.orderId)
           .update({
+        'dDeliveryTime': int.parse(deliveryTime),
         'driverId': currentUId,
         'status': 2,
       });
@@ -436,6 +483,7 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
           .collection('history')
           .doc(widget.orderId)
           .update({
+        'dDeliveryTime': int.parse(deliveryTime),
         'driverId': currentUId,
         'status': 2,
       });

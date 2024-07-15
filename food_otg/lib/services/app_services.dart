@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -57,7 +56,7 @@ class AppServices {
       case 2:
         return "Assigned to Delivery Partner";
       case 3:
-        return "Out of delivery";
+        return "Out for delivery";
       case 4:
         return "Payment to Delivery Partner";
       case 5:

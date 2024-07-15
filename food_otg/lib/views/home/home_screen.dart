@@ -440,24 +440,24 @@ class _HomeScreenState extends State<HomeScreen> {
                           //our body section
                           Container(
                             padding: EdgeInsets.symmetric(
-                                horizontal: 8.w, vertical: 6.h),
+                                horizontal: 8.w, vertical: 2.h),
                             child: SingleChildScrollView(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   buildTopSearchBar(),
-                                  SizedBox(height: 10.h),
+                                  SizedBox(height: 2.h),
                                   buildImageSlider(),
-                                  SizedBox(height: 20.h),
+                                  SizedBox(height: 5.h),
                                   Padding(
-                                    padding: EdgeInsets.only(top: 10.h),
+                                    padding: EdgeInsets.only(top: 5.h),
                                     child: Text("Tasty food near to you",
-                                        style: AppFontStyles.font16Style
+                                        style: AppFontStyles.font18Style
                                             .copyWith(
                                                 color: kDark,
                                                 fontWeight: FontWeight.bold)),
                                   ),
-                                  SizedBox(height: 5.h),
+                                  // SizedBox(height: 5.h),
                                   CategoryListWidget(searchText: searchText),
                                   SizedBox(height: 100.h),
                                 ],

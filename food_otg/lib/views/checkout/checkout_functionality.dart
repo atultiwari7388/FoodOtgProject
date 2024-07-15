@@ -5,31 +5,26 @@ import 'package:food_otg/utils/toast_msg.dart';
 import '../../constants/constants.dart';
 import '../../services/collection_refrences.dart';
 
-import 'dart:math';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:food_otg/utils/toast_msg.dart';
-import '../../constants/constants.dart';
-import '../../services/collection_refrences.dart';
-
 Future<void> placeOrder(
-    String address,
-    String name,
-    String phoneNumber,
-    String payMode,
-    String restName,
-    double userLatitude,
-    double userLongitude,
-    List<dynamic> resId,
-    num totalBillAmount,
-    num subToTalAmount,
-    num gstAmount,
-    num discountAmount,
-    num discountValue,
-    String couponCode,
-    String paymentId,
-    num delievryCharges,
-    num gstAmountPrice) async {
+  String address,
+  String name,
+  String phoneNumber,
+  String payMode,
+  String restName,
+  double userLatitude,
+  double userLongitude,
+  List<dynamic> resId,
+  num totalBillAmount,
+  num subToTalAmount,
+  num gstAmount,
+  num discountAmount,
+  num discountValue,
+  String couponCode,
+  String paymentId,
+  num delievryCharges,
+  num gstAmountPrice,
+  String time,
+) async {
   try {
     // Fetch cart items
     QuerySnapshot cartSnapshot = await FirebaseFirestore.instance
@@ -60,6 +55,7 @@ Future<void> placeOrder(
         'quantity': doc['quantity'],
         'discount': doc['discountAmount'] ?? 0,
         'couponCode': doc['couponCode'] ?? "",
+        'time': doc["time"] ?? "10"
       });
     });
 
@@ -97,6 +93,8 @@ Future<void> placeOrder(
       'reviewSubmitted': false,
       "deliveryCharges": delievryCharges,
       "gstAmountPrice": gstAmountPrice,
+      "time": time,
+      "dDeliveryTime": 0,
     });
 
     // Save order details to admin-accessible collection
@@ -131,6 +129,8 @@ Future<void> placeOrder(
       "deliveryCharges": delievryCharges,
       "gstAmountPrice": gstAmountPrice,
       "gstAmount": gstAmount,
+      "time": time,
+      "dDeliveryTime": 0,
     });
 
     // Conditionally store payment information if payMode is online

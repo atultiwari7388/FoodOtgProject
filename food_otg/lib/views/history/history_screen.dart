@@ -94,6 +94,8 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
   @override
   Widget build(BuildContext context) {
     final orderId = widget.cartItem['orderId'];
+    final time = widget.cartItem['time'];
+    final dTime = widget.cartItem['dDeliveryTime'];
     final orderTime = DateTime.fromMillisecondsSinceEpoch(
         widget.cartItem['orderDate'].millisecondsSinceEpoch);
     final location = widget.cartItem['userDeliveryAddress'].split(' ').last;
@@ -113,6 +115,10 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
     final gstAmountPrice = widget.cartItem["gstAmountPrice"];
     final deliveryCharges = widget.cartItem["deliveryCharges"];
     final subTotalBill = widget.cartItem["subTotalBill"];
+
+    // final finalTime = time - dTime.toString();
+    final num parsedTime = num.tryParse(time) ?? 0;
+    final num finalTime = parsedTime - dTime;
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 10.0.h, horizontal: 20.0.w),
@@ -141,14 +147,24 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
                     text: "$orderId",
                     style: appStyle(16, kDark, FontWeight.bold),
                   ),
-                  Row(
+                  // Row(
+                  //   children: [
+                  //     Icon(Icons.location_on_outlined,
+                  //         color: kDark, size: 28.sp),
+                  //     SizedBox(width: 5.w),
+                  //     ReusableText(
+                  //       text: "$location",
+                  //       style: appStyle(14, kRed, FontWeight.bold),
+                  //     ),
+                  //   ],
+                  // ),
+                  Column(
                     children: [
-                      Icon(Icons.location_on_outlined,
-                          color: kDark, size: 28.sp),
-                      SizedBox(width: 5.w),
-                      ReusableText(
-                        text: "$location",
-                        style: appStyle(14, kRed, FontWeight.bold),
+                      Text("Delivery Time",
+                          style: appStyle(14, kDark, FontWeight.bold)),
+                      Center(
+                        child: Text("${finalTime.toString()} min",
+                            style: appStyle(12, kTertiary, FontWeight.bold)),
                       ),
                     ],
                   ),
@@ -179,7 +195,7 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
               SizedBox(height: 3.h),
               ReusableText(
                 text:
-                    "Order Time: ${DateFormat('yyyy-MM-dd HH:mm').format(orderTime)}",
+                    "Order Date: ${DateFormat('yyyy-MM-dd HH:mm').format(orderTime)}",
                 style: appStyle(13, kGrayLight, FontWeight.normal),
               ),
               SizedBox(height: 20.h),

@@ -127,6 +127,7 @@ class _CategoriesFoodScreenState extends State<CategoriesFoodScreen> {
             },
           ),
           SizedBox(width: 20.w),
+       
         ],
       ),
       body: Stack(

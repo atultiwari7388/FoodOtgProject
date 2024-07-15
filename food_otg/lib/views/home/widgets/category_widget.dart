@@ -77,19 +77,19 @@ class CategoryWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              Positioned(
-                top: 10.h,
-                right: 10.w,
-                child: IconButton(
-                  onPressed: () {
-                    // Handle adding to wishlist
-                  },
-                  icon: Icon(
-                    Icons.favorite_border,
-                    color: Colors.red,
-                  ),
-                ),
-              ),
+              // Positioned(
+              //   top: 10.h,
+              //   right: 10.w,
+              //   child: IconButton(
+              //     onPressed: () {
+              //       // Handle adding to wishlist
+              //     },
+              //     icon: Icon(
+              //       Icons.favorite_border,
+              //       color: Colors.red,
+              //     ),
+              //   ),
+              // ),
               // Positioned(
               //   bottom: 5.h,
               //   right: 10.w,

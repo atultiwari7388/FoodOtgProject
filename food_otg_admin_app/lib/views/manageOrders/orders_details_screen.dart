@@ -27,6 +27,7 @@ class OrderDetailsScreen extends StatefulWidget {
   final subTotalBill;
   final totalPrice;
   final orderDate;
+  final otp;
 
   const OrderDetailsScreen({
     required this.orderId,
@@ -50,6 +51,7 @@ class OrderDetailsScreen extends StatefulWidget {
     required this.subTotalBill,
     required this.totalPrice,
     required this.orderDate,
+    required this.otp,
   });
 
   @override
@@ -95,6 +97,10 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: 4),
+            Text(
+              'OTP: ${widget.otp.toString()}',
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+            ),
             ReusableText(
               text:
                   "Order Date: ${DateFormat('yyyy-MM-dd HH:mm').format(widget.orderDate)}",

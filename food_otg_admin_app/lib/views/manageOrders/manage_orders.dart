@@ -231,6 +231,7 @@ class _ManageOrdersScreenState extends State<ManageOrdersScreen> {
                                   subTotalBill: subTotalBill,
                                   totalPrice: totalPrice,
                                   orderDate: orderDate,
+                                  otp: data["otp"] ?? 0,
                                 )),
                             child: reusableRowWidget(
                               orderId,
@@ -457,6 +458,7 @@ class _ManageOrdersScreenState extends State<ManageOrdersScreen> {
                 subTotalBill: subTotalBill,
                 totalPrice: totalPrice,
                 orderDate: orderDate,
+                otp: data["otp"] ?? 0,
               ));
         },
         child: Padding(

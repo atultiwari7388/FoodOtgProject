@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:food_otg_driver/services/collection_refrences.dart';
-import 'package:food_otg_driver/views/auth/personal_details_screen.dart';
 import 'package:food_otg_driver/views/auth/phone_authentication_screen.dart';
 import 'package:get/get.dart';
 import '../../constants/constants.dart';

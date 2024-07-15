@@ -465,6 +465,7 @@ class _FoodTileWidgetState extends State<FoodTileWidget> {
                                     "baseTotalPrice": finalPrice,
                                     "quantityPrice": finalPrice,
                                     "foodPrice": widget.food["price"],
+                                    "time": widget.food["time"].toString(),
                                     "resId": widget.food["resId"],
                                     "foodCalories": widget.food["foodCalories"],
                                     "isVeg": widget.food["isVeg"],
@@ -497,7 +498,7 @@ class _FoodTileWidgetState extends State<FoodTileWidget> {
                               );
                             },
                             child: Text(
-                                "Add to cart -₹${calculateTotalPrice(quantity, selectedAddOnPrices).toStringAsFixed(1)} ",
+                                "Add to cart ₹${calculateTotalPrice(quantity, selectedAddOnPrices).toStringAsFixed(1)} ",
                                 style: appStyle(16, kDark, FontWeight.w500)),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.transparent,

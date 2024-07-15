@@ -300,6 +300,7 @@ class _ViewAllCustomersOrdersState extends State<ViewAllCustomersOrders> {
                             subTotalBill: subTotalBill,
                             totalPrice: totalPrice,
                             orderDate: orderDate,
+                            otp: data["otp"] ?? 0,
                           )),
                       child: reusableRowWidget(
                         orderId,

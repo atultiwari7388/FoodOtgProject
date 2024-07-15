@@ -49,7 +49,7 @@ class _CategoryListWidgetState extends State<CategoryListWidget> {
           }
 
           return Container(
-            padding: EdgeInsets.only(left: 12.w, top: 10.h),
+            padding: EdgeInsets.only(left: 12.w, top: 5.h),
             child: ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
@@ -76,7 +76,5 @@ class _CategoryListWidgetState extends State<CategoryListWidget> {
         }
       },
     );
- 
- 
   }
 }

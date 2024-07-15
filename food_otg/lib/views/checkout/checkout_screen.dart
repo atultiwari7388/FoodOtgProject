@@ -37,6 +37,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
   num discountAmount = 0;
   num gstAmountPrice = 0;
   String? address;
+  String? time;
   String? addreeType;
   String? name;
   String? phoneNumber;
@@ -597,6 +598,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
                   paymentId,
                   isDeliveryChargesApplied ? deliveryCharges : 0,
                   gstAmountPrice,
+                  time.toString(),
                   // orderList,
                 ).then((value) {
                   Get.offAll(() => SuccessScreen(),
@@ -719,7 +721,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
                       style: appStyle(13, kDark, FontWeight.normal),
                       children: [
                         TextSpan(
-                            text: " 25-30 mins",
+                            text: "$time mins",
                             style: appStyle(13, kDark, FontWeight.bold)),
                       ],
                     ),
@@ -834,6 +836,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
                   calculatedTotalBill = cartSnapshot.data!.docs.fold(0,
                       (previousValue, cartItem) {
                     discValue = cartItem["discountAmount"] ?? 0.0;
+                    time = cartItem["time"]; //for storing the delivery time
                     if (isCouponApplied) {
                       return cartItem["totalPrice"];
                     } else {
