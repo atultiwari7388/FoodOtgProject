@@ -118,7 +118,7 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
 
     // final finalTime = time - dTime.toString();
     final num parsedTime = num.tryParse(time) ?? 0;
-    final num finalTime = parsedTime - dTime;
+    final num finalTime = parsedTime + dTime;
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 10.0.h, horizontal: 20.0.w),
@@ -163,8 +163,10 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
                       Text("Delivery Time",
                           style: appStyle(14, kDark, FontWeight.bold)),
                       Center(
-                        child: Text("${finalTime.toString()} min",
-                            style: appStyle(12, kTertiary, FontWeight.bold)),
+                        child: (status >= 2 && status <= 5)
+                            ? Text("${finalTime.toString()} min",
+                                style: appStyle(12, kTertiary, FontWeight.bold))
+                            : Text("${time.toString()} min"),
                       ),
                     ],
                   ),

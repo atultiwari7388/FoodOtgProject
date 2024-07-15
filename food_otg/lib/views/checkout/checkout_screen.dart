@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +17,7 @@ import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../../functions/increment_and_decrement.dart';
 import '../../services/collection_refrences.dart';
 import '../success/success_screen.dart';
+import 'package:logger/logger.dart';
 
 class CheckoutScreen extends StatefulWidget {
   const CheckoutScreen({
@@ -57,6 +59,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
   bool isDeliveryChargesApplied = false;
   num calculatedTotalBill = 0;
   num discountValue = 0;
+  var logger = Logger();
 
   @override
   void initState() {
@@ -92,15 +95,15 @@ class _CheckoutScreenState extends State<CheckoutScreen>
     try {
       _razorpay.open(options);
     } catch (e) {
-      log(e.toString());
+      logger.d(e.toString());
     }
   }
 
   void _handlePaymentSuccess(PaymentSuccessResponse response) {
     showToastMessage("Success", "Payment Successful", Colors.green);
-    log(response.paymentId.toString());
-    log(response.orderId.toString());
-    log(response.signature.toString());
+    logger.d(response.paymentId.toString());
+    logger.d(response.orderId.toString());
+    logger.d(response.signature.toString());
     placeOrderLogic(
         paymentMode: "online", paymentId: response.paymentId.toString());
   }
@@ -133,7 +136,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
       // Set the apiKey to the class variable
       setState(() {
         razorpayApiKey = apiKey;
-        log("RazorPayApiKey set to " + razorpayApiKey.toString());
+        logger.d("RazorPayApiKey set to " + razorpayApiKey.toString());
         isApiKeyLoading = false;
       });
     } catch (error) {
@@ -141,7 +144,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
         isApiKeyLoading = true;
       });
       // Handle any errors that occur during the process
-      log("Error fetching API key: $error");
+      logger.d("Error fetching API key: $error");
     }
   }
 
@@ -164,7 +167,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
       // Set the apiKey to the class variable
       setState(() {
         minimuOrderValue = minValue;
-        log("minimum Order value set to " + minimuOrderValue.toString());
+        logger.d("minimum Order value set to " + minimuOrderValue.toString());
         isApiKeyLoading = false;
       });
     } catch (error) {
@@ -172,7 +175,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
         isApiKeyLoading = true;
       });
       // Handle any errors that occur during the process
-      log("Error fetching API key: $error");
+      logger.d("Error fetching API key: $error");
     }
   }
 
@@ -195,7 +198,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
       // Set the apiKey to the class variable
       setState(() {
         lessOrderValue = minValue;
-        log("LessOrder Value set to " + lessOrderValue.toString());
+        logger.d("LessOrder Value set to " + lessOrderValue.toString());
         isApiKeyLoading = false;
       });
     } catch (error) {
@@ -203,7 +206,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
         isApiKeyLoading = true;
       });
       // Handle any errors that occur during the process
-      log("Error fetching API key: $error");
+      logger.d("Error fetching API key: $error");
     }
   }
 
@@ -226,7 +229,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
       // Set the apiKey to the class variable
       setState(() {
         deliveryCharges = minValue;
-        log("DeliveryCharges Value set to " + deliveryCharges.toString());
+        logger.d("DeliveryCharges Value set to " + deliveryCharges.toString());
         isApiKeyLoading = false;
       });
     } catch (error) {
@@ -234,7 +237,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
         isApiKeyLoading = true;
       });
       // Handle any errors that occur during the process
-      log("Error fetching API key: $error");
+      logger.d("Error fetching API key: $error");
     }
   }
 
@@ -256,7 +259,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
       // Set the apiKey to the class variable
       setState(() {
         gstCharges = minValue;
-        log("Gst Charges Value set to " + gstCharges.toString());
+        logger.d("Gst Charges Value set to " + gstCharges.toString());
         isApiKeyLoading = false;
       });
     } catch (error) {
@@ -264,7 +267,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
         isApiKeyLoading = true;
       });
       // Handle any errors that occur during the process
-      log("Error fetching API key: $error");
+      logger.d("Error fetching API key: $error");
     }
   }
 
@@ -280,14 +283,26 @@ class _CheckoutScreenState extends State<CheckoutScreen>
             0.0,
             (previousValue, cartItem) =>
                 previousValue + cartItem["quantityPrice"]);
+
+        // String newTime = cartSnapshot.docs.fold(
+        //     "0", (previousValue, cartItem) => previousValue + cartItem["time"]);
+
+        // Find the highest time value
+        double maxTime = cartSnapshot.docs.fold(
+            0.0,
+            (previousValue, cartItem) =>
+                max(previousValue, double.parse(cartItem["time"] ?? "0")));
+
         setState(() {
+          time = maxTime.toStringAsFixed(0);
           baseToTalBill = initialTotalBill;
           totalBill = initialTotalBill;
           subtotal = initialTotalBill;
           // calculatedTotalBill = initialTotalBill;
-          log("TotalBill set to " + totalBill.toString());
-          log("Base TotalBill set to " + totalBill.toString());
-          log("Subtotal set to " + subtotal.toString());
+          logger.d("TotalBill set to " + totalBill.toString());
+          logger.d("Base TotalBill set to " + totalBill.toString());
+          logger.d("Subtotal set to " + subtotal.toString());
+          logger.d("Time is set to " + time.toString());
 
           if (totalBill < lessOrderValue) {
             totalBill += deliveryCharges;
@@ -564,20 +579,21 @@ class _CheckoutScreenState extends State<CheckoutScreen>
               double distance = calculateDistance(userLatitude, userLongitude,
                   restaurantLatitude, restaurantLongitude);
 
-              log("User Lat Long " +
+              logger.d("User Lat Long " +
                   userLatitude.toString() +
                   "" +
                   userLongitude.toString());
-              log("Restaurant Lat Long " +
+              logger.d("Restaurant Lat Long " +
                   restaurantLatitude.toString() +
                   "" +
                   restaurantLongitude.toString());
 
-              log("Total distance in km ${distance.toStringAsFixed(2)} km");
+              logger
+                  .d("Total distance in km ${distance.toStringAsFixed(2)} km");
 
               // Check if restaurant is within 5km range
               if (distance <= 5 && !restaurantFound) {
-                log("Restaurant is within 5km range");
+                logger.d("Restaurant is within 5km range");
 
                 placeOrder(
                   address!,
@@ -616,7 +632,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
               setState(() {
                 searchingRestaurants = false;
               });
-              log("Restaurant is not within 5km range");
+              logger.d("Restaurant is not within 5km range");
               showToastMessage(
                   "Not Found", "No Restaurant available near.", kRed);
             }
@@ -836,7 +852,9 @@ class _CheckoutScreenState extends State<CheckoutScreen>
                   calculatedTotalBill = cartSnapshot.data!.docs.fold(0,
                       (previousValue, cartItem) {
                     discValue = cartItem["discountAmount"] ?? 0.0;
-                    time = cartItem["time"]; //for storing the delivery time
+                    // time =
+                    //     cartItem["time"] ?? "0"; //for storing the delivery time
+
                     if (isCouponApplied) {
                       return cartItem["totalPrice"];
                     } else {
@@ -875,11 +893,12 @@ class _CheckoutScreenState extends State<CheckoutScreen>
                   } else {
                     totalBill = calculatedTotalBill;
                   }
-                  log("GST Amount calculated as " + gstAmountPrice.toString());
-                  log("Total Bill :" + totalBill.toString());
-                  log("SubTotal Bill: " + subtotal.toString());
-                  log("Discount Value: " + discValue.toString());
-                  log("Calculated Total Bill : " +
+                  logger.d(
+                      "GST Amount calculated as " + gstAmountPrice.toString());
+                  logger.d("Total Bill :" + totalBill.toString());
+                  logger.d("SubTotal Bill: " + subtotal.toString());
+                  logger.d("Discount Value: " + discValue.toString());
+                  logger.d("Calculated Total Bill : " +
                       calculatedTotalBill.toString());
 
                   return Container(
@@ -945,6 +964,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
                   );
                 },
               ),
+
               SizedBox(height: 15.h),
             ],
           );
@@ -1183,7 +1203,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
                     .doc(food.id)
                     .delete()
                     .then((value) {
-                  log("Item successfully deleted! ${food.id}");
+                  logger.d("Item successfully deleted! ${food.id}");
                   // deleteCoupon();
                   setState(() {
                     totalBill = subtotal;
@@ -1193,7 +1213,8 @@ class _CheckoutScreenState extends State<CheckoutScreen>
                     isCouponApplied = false;
                     calculateTotalBill();
                   });
-                  log("After Deleting the item then total is $totalBill and base total bill is $baseToTalBill and calculated total bill is $calculatedTotalBill and Discount amount is $discountAmount");
+                  logger.d(
+                      "After Deleting the item then total is $totalBill and base total bill is $baseToTalBill and calculated total bill is $calculatedTotalBill and Discount amount is $discountAmount");
                 });
                 Navigator.of(context).pop();
               },
@@ -1389,14 +1410,15 @@ class _CheckoutScreenState extends State<CheckoutScreen>
             baseToTalBill = subtotal;
             discountAmount = 0;
             setState(() {});
-            log('Cart item ${doc.id} updated successfully');
-            log("Cart Total is $totalBill and Subtotal is $subtotal and Base Total is $baseToTalBill and discount amount is $discountAmount");
+            logger.d('Cart item ${doc.id} updated successfully');
+            logger.d(
+                "Cart Total is $totalBill and Subtotal is $subtotal and Base Total is $baseToTalBill and discount amount is $discountAmount");
           }).catchError((error) {
-            log('Failed to update cart item ${doc.id}: $error');
+            logger.d('Failed to update cart item ${doc.id}: $error');
           });
         }
       }).catchError((error) {
-        log('Failed to fetch cart items: $error');
+        logger.d('Failed to fetch cart items: $error');
       });
     });
   }
@@ -1419,7 +1441,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
           couponSnapshot.data() as Map<String, dynamic>?;
 
       // Log coupon data for debugging
-      log('Coupon Data: $couponData');
+      logger.d('Coupon Data: $couponData');
 
       // Check if the coupon exists and is enabled
       if (couponSnapshot.exists && couponData?['enabled'] == true) {
@@ -1430,18 +1452,20 @@ class _CheckoutScreenState extends State<CheckoutScreen>
           // Apply discount based on the type of discount
           if (couponData?['discountType'] == 'percentage') {
             discount = baseToTalBill * (couponData?['discountValue'] / 100);
-            log("Discount value.. ${couponData?['discountValue'].toString()}");
-            log("Coupon Code value $couponCode");
+            logger.d(
+                "Discount value.. ${couponData?['discountValue'].toString()}");
+            logger.d("Coupon Code value $couponCode");
             setState(() {
               discountValue = couponData?['discountValue'];
             });
           } else if (couponData?['discountType'] == 'fixed') {
             discount = couponData?['discountValue'];
-            log("Discount value ${couponData?['discountValue'].toString()}");
+            logger
+                .d("Discount value ${couponData?['discountValue'].toString()}");
           }
 
           // Log the calculated discount for debugging
-          log('Calculated Discount: $discount');
+          logger.d('Calculated Discount: $discount');
 
           // Check if the coupon usage count is within the usage limit
           if (couponData?['usageCount'] < couponData?['usageLimit']) {
@@ -1451,7 +1475,8 @@ class _CheckoutScreenState extends State<CheckoutScreen>
               discountAmount = discount;
               isCouponApplied = true;
             });
-            log("Total Bill After apply coupon $baseToTalBill and discount amount is $discountAmount");
+            logger.d(
+                "Total Bill After apply coupon $baseToTalBill and discount amount is $discountAmount");
 
             // Update the coupon usage count in Firestore
             couponSnapshot.reference.update({
@@ -1477,25 +1502,25 @@ class _CheckoutScreenState extends State<CheckoutScreen>
 
             showToastMessage(
                 "Success", "Coupon applied successfully!", kSuccess);
-            log('Coupon applied successfully! Discount: $discount');
+            logger.d('Coupon applied successfully! Discount: $discount');
             return;
           } else {
             showToastMessage(
                 "Limit Reached", "Coupon has reached its usage limit.", kRed);
-            log('Coupon has reached its usage limit.');
+            logger.d('Coupon has reached its usage limit.');
           }
         } else {
           showToastMessage("Minimum Not Met",
               "Minimum purchase amount requirement not met.", kRed);
-          log('Minimum purchase amount requirement not met.');
+          logger.d('Minimum purchase amount requirement not met.');
         }
       } else {
         showToastMessage("Invalid", "Invalid or disabled coupon.", kRed);
-        log('Invalid or disabled coupon.');
+        logger.d('Invalid or disabled coupon.');
       }
     } catch (e) {
       showToastMessage("Error", "Error applying coupon: $e", kRed);
-      log('Error applying coupon: $e');
+      logger.d('Error applying coupon: $e');
     }
   }
 }
