@@ -315,7 +315,7 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
                     Center(
                       child: CustomGradientButton(
                         text: "Confirm",
-                        onPress: () => _acceptOrder(widget.status),
+                        onPress: () => showDeliveryTimeDialog(),
                         h: 35.h,
                         w: 120.w,
                       ),
@@ -356,14 +356,20 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
                               await FirebaseFirestore.instance
                                   .collection('orders')
                                   .doc(widget.orderId)
-                                  .update({'status': 3});
+                                  .update({
+                                'status': 3,
+                                "time": "0",
+                              });
 
                               await FirebaseFirestore.instance
                                   .collection('Users')
                                   .doc(widget.userId)
                                   .collection('history')
                                   .doc(widget.orderId)
-                                  .update({"status": 3});
+                                  .update({
+                                "status": 3,
+                                "time": "0",
+                              });
                             },
                             h: 40.h,
                             w: 80.w,
@@ -386,7 +392,7 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
       case 2:
         return "Driver Assign";
       case 3:
-        return "Out of delivery";
+        return "Out for delivery";
       case 4:
         return "OTP/Payment Request";
       case 5:
@@ -399,7 +405,53 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
     }
   }
 
-  void _acceptOrder(int status) async {
+  Future<void> showDeliveryTimeDialog() async {
+    final TextEditingController _controller = TextEditingController();
+    bool isButtonDisabled = true;
+
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Enter Food Preparing Time'),
+          content: TextField(
+            controller: _controller,
+            keyboardType: TextInputType.number,
+            onChanged: (value) {
+              setState(() {
+                isButtonDisabled = value.isEmpty;
+              });
+            },
+            decoration: const InputDecoration(
+              hintText: 'Food preparing time in minutes (10)',
+            ),
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                foregroundColor: Colors.white,
+                minimumSize: Size(120.w, 42.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0.r),
+                ),
+              ),
+              onPressed: isButtonDisabled
+                  ? null
+                  : () {
+                      String deliveryTime = _controller.text;
+                      Navigator.of(context).pop();
+                      _acceptOrder(widget.status, deliveryTime);
+                    },
+              child: const Text('Continue'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _acceptOrder(int status, foodPreparingTime) async {
     try {
       // Update values in the orders collection
       int otp = generateOTP();
@@ -414,6 +466,7 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
         "restLocation": restLocation,
         "otp": otp,
         'status': 1,
+        'time': foodPreparingTime.toString(),
       });
 
       await FirebaseFirestore.instance
@@ -429,6 +482,7 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
         "restLocation": restLocation,
         "otp": otp,
         'status': 1,
+        'time': foodPreparingTime.toString(),
       });
       widget.switchTab(1);
 

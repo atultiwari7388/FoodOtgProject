@@ -94,7 +94,7 @@ Future<void> placeOrder(
       "deliveryCharges": delievryCharges,
       "gstAmountPrice": gstAmountPrice,
       "time": time,
-      "dDeliveryTime": 0,
+      "dDeliveryTime": 10,
     });
 
     // Save order details to admin-accessible collection
@@ -130,7 +130,7 @@ Future<void> placeOrder(
       "gstAmountPrice": gstAmountPrice,
       "gstAmount": gstAmount,
       "time": time,
-      "dDeliveryTime": 0,
+      "dDeliveryTime": 10,
     });
 
     // Conditionally store payment information if payMode is online

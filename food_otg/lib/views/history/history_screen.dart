@@ -116,9 +116,19 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
     final deliveryCharges = widget.cartItem["deliveryCharges"];
     final subTotalBill = widget.cartItem["subTotalBill"];
 
-    // final finalTime = time - dTime.toString();
+    // final num parsedTime = num.tryParse(time) ?? 0;
+    // final num finalTime = (status == 1 || status == 2)
+    //     ? parsedTime + dTime
+    //     : (status == 3)
+    //         ? parsedTime - dTime
+    //         : parsedTime;
+
     final num parsedTime = num.tryParse(time) ?? 0;
-    final num finalTime = parsedTime + dTime;
+    final num finalTime = (status == 1 || status == 2)
+        ? parsedTime + dTime
+        : (status == 3)
+            ? (parsedTime > dTime ? parsedTime - dTime : dTime - parsedTime)
+            : parsedTime;
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 10.0.h, horizontal: 20.0.w),
@@ -147,29 +157,24 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
                     text: "$orderId",
                     style: appStyle(16, kDark, FontWeight.bold),
                   ),
-                  // Row(
-                  //   children: [
-                  //     Icon(Icons.location_on_outlined,
-                  //         color: kDark, size: 28.sp),
-                  //     SizedBox(width: 5.w),
-                  //     ReusableText(
-                  //       text: "$location",
-                  //       style: appStyle(14, kRed, FontWeight.bold),
-                  //     ),
-                  //   ],
-                  // ),
-                  Column(
-                    children: [
-                      Text("Delivery Time",
-                          style: appStyle(14, kDark, FontWeight.bold)),
-                      Center(
-                        child: (status >= 2 && status <= 5)
-                            ? Text("${finalTime.toString()} min",
-                                style: appStyle(12, kTertiary, FontWeight.bold))
-                            : Text("${time.toString()} min"),
-                      ),
-                    ],
-                  ),
+                  if (status != 4 && status != 5)
+                    Column(
+                      children: [
+                        Text("Delivery Time",
+                            style: appStyle(14, kDark, FontWeight.bold)),
+                        Center(
+                          child: status == 4
+                              ? Container()
+                              : Text(
+                                  status == 5
+                                      ? "${dTime.toString()} min"
+                                      : "${finalTime.toString()} min",
+                                  style:
+                                      appStyle(12, kTertiary, FontWeight.bold),
+                                ),
+                        ),
+                      ],
+                    ),
                 ],
               ),
               SizedBox(height: 3.h),

@@ -48,7 +48,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
   bool searchingRestaurants = false;
   bool restaurantFound = false;
   List<dynamic> resIds = [];
-  String selectedPaymentMethod = "Pay Using";
+  String selectedPaymentMethod = "Select Payment Mode";
   String razorpayApiKey = "";
   num minimuOrderValue = 0;
   num lessOrderValue = 0;
@@ -60,6 +60,8 @@ class _CheckoutScreenState extends State<CheckoutScreen>
   num calculatedTotalBill = 0;
   num discountValue = 0;
   var logger = Logger();
+  num finalTimeAfterAdding10 = 0;
+  // bool isButtonEnabled = false;
 
   @override
   void initState() {
@@ -284,9 +286,6 @@ class _CheckoutScreenState extends State<CheckoutScreen>
             (previousValue, cartItem) =>
                 previousValue + cartItem["quantityPrice"]);
 
-        // String newTime = cartSnapshot.docs.fold(
-        //     "0", (previousValue, cartItem) => previousValue + cartItem["time"]);
-
         // Find the highest time value
         double maxTime = cartSnapshot.docs.fold(
             0.0,
@@ -295,6 +294,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
 
         setState(() {
           time = maxTime.toStringAsFixed(0);
+          finalTimeAfterAdding10 = int.parse(time!) + 10;
           baseToTalBill = initialTotalBill;
           totalBill = initialTotalBill;
           subtotal = initialTotalBill;
@@ -491,8 +491,24 @@ class _CheckoutScreenState extends State<CheckoutScreen>
                           ],
                         ),
                         Spacer(),
-                        selectedPaymentMethod == "Pay Using"
-                            ? SizedBox()
+                        selectedPaymentMethod == "Select Payment Mode"
+                            ? ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent,
+                                ),
+                                onPressed: () {
+                                  // Show a message when the button is disabled
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content:
+                                          Text("First select the payment mode"),
+                                    ),
+                                  );
+                                },
+                                child: Text("Place order",
+                                    style:
+                                        appStyle(13, kDark, FontWeight.normal)))
                             : Container(
                                 height: 45.h,
                                 // width: 140.w,
@@ -510,7 +526,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
                                 ),
                                 child: ElevatedButton(
                                   onPressed: selectedPaymentMethod ==
-                                          "Pay Using"
+                                          "Select Payment Mode"
                                       ? null
                                       : () {
                                           if (selectedPaymentMethod == "cash") {
@@ -737,7 +753,8 @@ class _CheckoutScreenState extends State<CheckoutScreen>
                       style: appStyle(13, kDark, FontWeight.normal),
                       children: [
                         TextSpan(
-                            text: "$time mins",
+                            text:
+                                "${finalTimeAfterAdding10.toStringAsFixed(0)} mins",
                             style: appStyle(13, kDark, FontWeight.bold)),
                       ],
                     ),

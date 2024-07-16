@@ -54,7 +54,7 @@ class AppServices {
       case 1:
         return "Order Confirmed";
       case 2:
-        return "Assigned to Delivery Partner";
+        return "Driver Assigned";
       case 3:
         return "Out for delivery";
       case 4:

@@ -279,7 +279,7 @@ class _AllOrderHistoryScreenItemsState
       case 1:
         return "Order Confirmed";
       case 2:
-        return "Assigned to Delivery Partner";
+        return "Driver Assigned";
       case 3:
         return "Out of delivery";
       case 4:
