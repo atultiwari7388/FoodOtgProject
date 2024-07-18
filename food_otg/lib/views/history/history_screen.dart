@@ -116,19 +116,12 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
     final deliveryCharges = widget.cartItem["deliveryCharges"];
     final subTotalBill = widget.cartItem["subTotalBill"];
 
-    // final num parsedTime = num.tryParse(time) ?? 0;
-    // final num finalTime = (status == 1 || status == 2)
-    //     ? parsedTime + dTime
-    //     : (status == 3)
-    //         ? parsedTime - dTime
-    //         : parsedTime;
-
     final num parsedTime = num.tryParse(time) ?? 0;
     final num finalTime = (status == 1 || status == 2)
         ? parsedTime + dTime
         : (status == 3)
             ? (parsedTime > dTime ? parsedTime - dTime : dTime - parsedTime)
-            : parsedTime;
+            : parsedTime + dTime;
 
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 10.0.h, horizontal: 20.0.w),

@@ -180,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
 
     int delaySeconds =
-        firstTimeAppLaunch ? 4 : 3; // Determine delay based on first app launch
+        firstTimeAppLaunch ? 3 : 2; // Determine delay based on first app launch
 
     await Future.delayed(Duration(seconds: delaySeconds)); // Introduce delay
 
