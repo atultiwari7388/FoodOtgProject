@@ -145,7 +145,13 @@ class AppServices {
 
   //=============================== rating and review =========================
 // Add a method to show the rating dialog
-  void showRatingDialog(String orderId, String driverId, BuildContext context) {
+  void showRatingDialog(
+    String orderId,
+    String driverId,
+    BuildContext context,
+    String managerId,
+    List<dynamic> orderItems,
+  ) {
     double _rating = 0;
     String _review = '';
 
@@ -184,7 +190,13 @@ class AppServices {
             ElevatedButton(
               onPressed: () async {
                 await _updateRatingAndReview(
-                    orderId, driverId, _rating, _review);
+                  orderId,
+                  driverId,
+                  _rating,
+                  _review,
+                  managerId,
+                  orderItems,
+                );
                 Navigator.of(context).pop();
               },
               child: Text('Submit'),
@@ -210,7 +222,14 @@ class AppServices {
   }
 
   Future<void> _updateRatingAndReview(
-      String orderId, String driverId, double rating, String review) async {
+    String orderId,
+    String driverId,
+    double rating,
+    String review,
+    String managerId,
+    // String itemId,
+    List<dynamic> orderItems,
+  ) async {
     try {
       await FirebaseFirestore.instance
           .collection("Users")
@@ -232,6 +251,18 @@ class AppServices {
       });
 
       await FirebaseFirestore.instance
+          .collection('Managers')
+          .doc(managerId)
+          .collection('ratings')
+          .doc()
+          .set({
+        'rating': rating,
+        'review': review,
+        "uId": FirebaseAuth.instance.currentUser!.uid,
+        "timestamp": DateTime.now(),
+      });
+
+      await FirebaseFirestore.instance
           .collection('Drivers')
           .doc(driverId)
           .collection('ratings')
@@ -243,7 +274,38 @@ class AppServices {
         "timestamp": DateTime.now(),
       });
 
-      log('Rating and review updated successfully.');
+      for (var orderItem in orderItems) {
+        final itemId = orderItem['foodId'];
+        DocumentSnapshot itemSnapshot = await FirebaseFirestore.instance
+            .collection('Items')
+            .doc(itemId)
+            .get();
+
+        num currentRatingCount = itemSnapshot["ratingCount"] ?? 0;
+        num newratingCount = currentRatingCount + 1;
+        await FirebaseFirestore.instance
+            .collection('Items')
+            .doc(itemId)
+            .update({
+          'rating': rating,
+          'ratingCount': newratingCount,
+          "timestamp": DateTime.now(),
+        }).then((value) async {
+          await FirebaseFirestore.instance
+              .collection('Items')
+              .doc(itemId)
+              .collection('ratings')
+              .doc()
+              .set({
+            'rating': rating,
+            'review': review,
+            "uId": FirebaseAuth.instance.currentUser!.uid,
+            "timestamp": DateTime.now(),
+          });
+        });
+
+        log('Rating and review updated successfully.');
+      }
     } catch (error) {
       log('Error updating rating and review: $error');
       showToastMessage(

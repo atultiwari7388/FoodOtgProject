@@ -99,6 +99,8 @@ class _AllOrderHistoryScreenItemsState
   @override
   Widget build(BuildContext context) {
     final orderId = widget.cartItem['orderId'];
+    final managerId = widget.cartItem['managerId'];
+    final resIdList = widget.cartItem['restId'];
     final orderTime = DateTime.fromMillisecondsSinceEpoch(
         widget.cartItem['orderDate'].millisecondsSinceEpoch);
     final location = widget.cartItem['userDeliveryAddress'].split(' ').last;
@@ -259,8 +261,8 @@ class _AllOrderHistoryScreenItemsState
                     ElevatedButton(
                       onPressed: () {
                         // showRatingDialog(booking, context);
-                        AppServices()
-                            .showRatingDialog(orderId, driverId, context);
+                        AppServices().showRatingDialog(orderId, driverId,
+                            context, managerId, widget.cartItem['orderItems']);
                       },
                       child: Text("Leave a Rating"),
                       style: ElevatedButton.styleFrom(

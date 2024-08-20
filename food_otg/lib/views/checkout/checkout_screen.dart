@@ -12,6 +12,7 @@ import 'package:food_otg/utils/toast_msg.dart';
 import 'package:food_otg/views/address/address_management_screen.dart';
 import 'package:food_otg/views/checkout/checkout_functionality.dart';
 import 'package:food_otg/views/coupons/coupons_screen.dart';
+import 'package:food_otg/views/lottieAnimation/lottie_animation_overlay_screen.dart';
 import 'package:get/get.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import '../../functions/increment_and_decrement.dart';
@@ -32,6 +33,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
     with WidgetsBindingObserver {
   final TextEditingController _couponController = TextEditingController();
   bool isCouponApplied = false;
+  bool showAnimation = false;
   num totalBill = 0.0;
   num baseToTalBill = 0;
   num subtotal = 0.0;
@@ -334,225 +336,252 @@ class _CheckoutScreenState extends State<CheckoutScreen>
         deleteCoupon();
         return true; // Return true to allow the pop navigation
       },
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            onPressed: () {
-              deleteCoupon();
-              Navigator.pop(context);
-            },
-            icon: Icon(Icons.arrow_back_ios_new),
-          ),
-          iconTheme: IconThemeData(color: kDark),
-          title: ReusableText(
-              text: "Checkout", style: appStyle(18, kDark, FontWeight.normal)),
-        ),
-        body: isApiKeyLoading
-            ? Center(child: CircularProgressIndicator())
-            : SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    //top section dynamic product
-                    StreamBuilder(
-                      stream: FirebaseFirestore.instance
-                          .collection("Users")
-                          .doc(currentUId)
-                          .collection("cart")
-                          .snapshots(),
-                      builder:
-                          (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return Center(child: CircularProgressIndicator());
-                        }
-
-                        if (snapshot.hasError) {
-                          return Center(
-                              child: Text('Error: ${snapshot.error}'));
-                        }
-
-                        // Check if cart is empty
-                        if (snapshot.data!.docs.isEmpty) {
-                          return Center(child: Text('Your cart is empty'));
-                        }
-
-                        return ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: snapshot.data!.docs.length,
-                          itemBuilder: (ctx, index) {
-                            final food = snapshot.data!.docs[index];
-                            final foodId = food.id;
-                            resIds = food["resId"];
-                            final Map<String, dynamic> selectedAddOns =
-                                food["selectedAddOnsPrice"];
-                            final List<dynamic> selectedAddOnsName =
-                                food["selectedAddOns"];
-
-                            final num selectedSizePrice =
-                                food["selectedSizePrice"];
-                            final String selectedSize =
-                                food["selectedSize"] == null
-                                    ? ""
-                                    : food["selectedSize"];
-
-                            return buildProductCard(
-                                food,
-                                foodId,
-                                selectedAddOns,
-                                selectedAddOnsName,
-                                selectedSizePrice,
-                                selectedSize);
-                          },
-                        );
-                      },
-                    ),
-
-                    SizedBox(height: 7.h),
-                    Padding(
-                      padding:
-                          EdgeInsets.only(left: 15.w, top: 8.h, bottom: 5.h),
-                      child: ReusableText(
-                          text: "Apply Coupon",
-                          style: appStyle(15, kDark, FontWeight.normal)),
-                    ),
-                    //here lets create coupon section
-                    SizedBox(height: 10.h),
-                    buildCouponSection(_couponController),
-                    SizedBox(height: 10.h),
-                    //delivery time , delivery address, and contact name and number, and total bill
-                    buildDeliveryTimeAddressSection(),
-                    // SizedBox(height: 10.h),
-                    buildPrivacyPolicy(),
-                  ],
-                ),
+      child: Stack(
+        children: [
+          Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                onPressed: () {
+                  deleteCoupon();
+                  Navigator.pop(context);
+                },
+                icon: Icon(Icons.arrow_back_ios_new),
               ),
-        bottomNavigationBar: searchingRestaurants
-            ? Center(child: CircularProgressIndicator())
-            : totalBill < minimuOrderValue
-                ? Container(
-                    height: 80.h,
-                    width: double.maxFinite,
-                    color: kWhite,
-                    margin: EdgeInsets.fromLTRB(7.w, 2.h, 10.w, 5.h),
-                    padding: EdgeInsets.all(10.h),
-                    child: Center(
-                      child: Text(
-                        "Minimum order should be ₹100",
-                        style: TextStyle(color: Colors.red),
-                      ),
-                    ),
-                  )
-                : Container(
-                    height: 80.h,
-                    width: double.maxFinite,
-                    color: kWhite,
-                    margin: EdgeInsets.fromLTRB(7.w, 2.h, 10.w, 5.h),
-                    padding: EdgeInsets.all(10.h),
-                    child: Row(
+              iconTheme: IconThemeData(color: kDark),
+              title: ReusableText(
+                  text: "Checkout",
+                  style: appStyle(18, kDark, FontWeight.normal)),
+            ),
+            body: isApiKeyLoading
+                ? Center(child: CircularProgressIndicator())
+                : SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            PopupMenuButton(
-                              initialValue: "Please Select Pyament options",
-                              itemBuilder: (context) => [
-                                PopupMenuItem(
-                                  child: Text("Online Payment"),
-                                  value: "online",
-                                ),
-                                PopupMenuItem(
-                                  child: Text("Cash on Delivery"),
-                                  value: "cash",
-                                ),
-                              ],
-                              onSelected: (value) {
-                                // Update the selected payment method and rebuild the UI
-                                setState(() {
-                                  selectedPaymentMethod = value;
-                                });
+                        //top section dynamic product
+                        StreamBuilder(
+                          stream: FirebaseFirestore.instance
+                              .collection("Users")
+                              .doc(currentUId)
+                              .collection("cart")
+                              .snapshots(),
+                          builder:
+                              (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Center(child: CircularProgressIndicator());
+                            }
+
+                            if (snapshot.hasError) {
+                              return Center(
+                                  child: Text('Error: ${snapshot.error}'));
+                            }
+
+                            // Check if cart is empty
+                            if (snapshot.data!.docs.isEmpty) {
+                              return Center(child: Text('Your cart is empty'));
+                            }
+
+                            return ListView.builder(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: snapshot.data!.docs.length,
+                              itemBuilder: (ctx, index) {
+                                final food = snapshot.data!.docs[index];
+                                final foodId = food.id;
+                                resIds = food["resId"];
+                                final Map<String, dynamic> selectedAddOns =
+                                    food["selectedAddOnsPrice"];
+                                final List<dynamic> selectedAddOnsName =
+                                    food["selectedAddOns"];
+
+                                final num selectedSizePrice =
+                                    food["selectedSizePrice"];
+                                final String selectedSize =
+                                    food["selectedSize"] == null
+                                        ? ""
+                                        : food["selectedSize"];
+
+                                return buildProductCard(
+                                    food,
+                                    foodId,
+                                    selectedAddOns,
+                                    selectedAddOnsName,
+                                    selectedSizePrice,
+                                    selectedSize);
                               },
-                              child: Row(
-                                children: [
-                                  ReusableText(
-                                    text: selectedPaymentMethod,
-                                    style:
-                                        appStyle(12, kGray, FontWeight.normal),
-                                  ),
-                                  Icon(
-                                    Icons.arrow_drop_up,
-                                    color: kGray,
-                                    size: 18.sp,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                            );
+                          },
                         ),
-                        Spacer(),
-                        selectedPaymentMethod == "Select Payment Mode"
-                            ? ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.transparent,
-                                  shadowColor: Colors.transparent,
-                                ),
-                                onPressed: () {
-                                  // Show a message when the button is disabled
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content:
-                                          Text("First select the payment mode"),
-                                    ),
-                                  );
-                                },
-                                child: Text("Place order",
-                                    style:
-                                        appStyle(13, kDark, FontWeight.normal)))
-                            : Container(
-                                height: 45.h,
-                                // width: 140.w,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  gradient: LinearGradient(
-                                    begin: Alignment.centerLeft,
-                                    end: Alignment.centerRight,
-                                    colors: [
-                                      Color(0xFF976E38),
-                                      Color(0xFFF8E79F),
-                                      Color(0xFF976E38),
-                                    ],
-                                  ),
-                                ),
-                                child: ElevatedButton(
-                                  onPressed: selectedPaymentMethod ==
-                                          "Select Payment Mode"
-                                      ? null
-                                      : () {
-                                          if (selectedPaymentMethod == "cash") {
-                                            placeOrderLogic(
-                                                paymentMode: "cash",
-                                                paymentId: "");
-                                          } else if (selectedPaymentMethod ==
-                                              "online") {
-                                            if (totalBill < lessOrderValue) {
-                                              totalBill += deliveryCharges;
-                                              openRazorpayCheckout(totalBill);
-                                            }
-                                          }
-                                        },
-                                  child: Text("Place Order",
-                                      style:
-                                          appStyle(16, kDark, FontWeight.w500)),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.transparent,
-                                    shadowColor: Colors.transparent,
-                                  ),
-                                ),
-                              ),
+
+                        SizedBox(height: 7.h),
+                        Padding(
+                          padding: EdgeInsets.only(
+                              left: 15.w, top: 8.h, bottom: 5.h),
+                          child: ReusableText(
+                              text: "Apply Coupon",
+                              style: appStyle(15, kDark, FontWeight.normal)),
+                        ),
+                        //here lets create coupon section
+                        SizedBox(height: 10.h),
+                        buildCouponSection(_couponController),
+                        SizedBox(height: 10.h),
+                        //delivery time , delivery address, and contact name and number, and total bill
+                        buildDeliveryTimeAddressSection(),
+                        // SizedBox(height: 10.h),
+                        buildPrivacyPolicy(),
                       ],
                     ),
                   ),
+            bottomNavigationBar: searchingRestaurants
+                ? Center(child: CircularProgressIndicator())
+                : totalBill < minimuOrderValue
+                    ? Container(
+                        height: 80.h,
+                        width: double.maxFinite,
+                        color: kWhite,
+                        margin: EdgeInsets.fromLTRB(7.w, 2.h, 10.w, 5.h),
+                        padding: EdgeInsets.all(10.h),
+                        child: Center(
+                          child: Text(
+                            "Minimum order should be ₹100",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ),
+                      )
+                    : Container(
+                        height: 80.h,
+                        width: double.maxFinite,
+                        color: kWhite,
+                        margin: EdgeInsets.fromLTRB(7.w, 2.h, 10.w, 5.h),
+                        padding: EdgeInsets.all(10.h),
+                        child: Row(
+                          children: [
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                PopupMenuButton(
+                                  initialValue: "Please Select Pyament options",
+                                  itemBuilder: (context) => [
+                                    PopupMenuItem(
+                                      child: Text("Online Payment"),
+                                      value: "online",
+                                    ),
+                                    PopupMenuItem(
+                                      child: Text("Cash on Delivery"),
+                                      value: "cash",
+                                    ),
+                                  ],
+                                  onSelected: (value) {
+                                    // Update the selected payment method and rebuild the UI
+                                    setState(() {
+                                      selectedPaymentMethod = value;
+                                    });
+                                  },
+                                  child: Row(
+                                    children: [
+                                      ReusableText(
+                                        text: selectedPaymentMethod,
+                                        style: appStyle(
+                                            12, kGray, FontWeight.normal),
+                                      ),
+                                      Icon(
+                                        Icons.arrow_drop_up,
+                                        color: kGray,
+                                        size: 18.sp,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Spacer(),
+                            selectedPaymentMethod == "Select Payment Mode"
+                                ? ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.transparent,
+                                      shadowColor: Colors.transparent,
+                                    ),
+                                    onPressed: () {
+                                      // Show a message when the button is disabled
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                              "First select the payment mode"),
+                                        ),
+                                      );
+                                    },
+                                    child: Text("Place order",
+                                        style: appStyle(
+                                            13, kDark, FontWeight.normal)))
+                                : Container(
+                                    height: 45.h,
+                                    // width: 140.w,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      gradient: LinearGradient(
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight,
+                                        colors: [
+                                          Color(0xFF976E38),
+                                          Color(0xFFF8E79F),
+                                          Color(0xFF976E38),
+                                        ],
+                                      ),
+                                    ),
+                                    child: ElevatedButton(
+                                      onPressed: selectedPaymentMethod ==
+                                              "Select Payment Mode"
+                                          ? null
+                                          : () {
+                                              if (selectedPaymentMethod ==
+                                                  "cash") {
+                                                placeOrderLogic(
+                                                    paymentMode: "cash",
+                                                    paymentId: "");
+                                              } else if (selectedPaymentMethod ==
+                                                  "online") {
+                                                if (totalBill <
+                                                    lessOrderValue) {
+                                                  totalBill += deliveryCharges;
+                                                  openRazorpayCheckout(
+                                                      totalBill);
+                                                }
+                                              }
+                                            },
+                                      child: Text("Place Order",
+                                          style: appStyle(
+                                              16, kDark, FontWeight.w500)),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.transparent,
+                                        shadowColor: Colors.transparent,
+                                      ),
+                                    ),
+                                  ),
+                          ],
+                        ),
+                      ),
+          ),
+          if (showAnimation)
+            // LottieAnimationOverlay(
+            //     animationUrl: "assets/coupon_found.gif",
+            //     duration: Duration(seconds: 5),
+            //     onCompleted: () {
+            //       setState(() {
+            //         showAnimation = false;
+            //       });
+            //     }),
+            LottieAnimationOverlay(
+                animationUrl:
+                    "https://lottie.host/902cff49-10ff-4a25-8660-e30326b71bbb/T2jNAbW1vQ.json",
+                duration: Duration(seconds: 5),
+                onCompleted: () {
+                  setState(() {
+                    showAnimation = false;
+                  });
+                }),
+        ],
       ),
     );
   }
@@ -1491,6 +1520,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
               // subtotal -= discount;
               discountAmount = discount;
               isCouponApplied = true;
+              showAnimation = true;
             });
             logger.d(
                 "Total Bill After apply coupon $baseToTalBill and discount amount is $discountAmount");
@@ -1520,6 +1550,7 @@ class _CheckoutScreenState extends State<CheckoutScreen>
             showToastMessage(
                 "Success", "Coupon applied successfully!", kSuccess);
             logger.d('Coupon applied successfully! Discount: $discount');
+
             return;
           } else {
             showToastMessage(

@@ -6,7 +6,7 @@ import 'package:food_otg/constants/constants.dart';
 import 'package:food_otg/utils/app_styles.dart';
 import 'package:food_otg/views/entry_point.dart';
 import 'package:get/get.dart';
-import 'package:vibration/vibration.dart'; // Import for vibrating device
+import 'package:vibration/vibration.dart';
 
 class SuccessScreen extends StatefulWidget {
   const SuccessScreen({Key? key}) : super(key: key);
@@ -19,12 +19,10 @@ class _SuccessScreenState extends State<SuccessScreen> {
   @override
   void initState() {
     super.initState();
-    // Play system ringtone
-    // FlutterRingtonePlayer.playNotification();
-    // Vibrate the device
+
     Vibration.vibrate(duration: 1000); // Vibrate for 1 second
     // Start a timer to automatically redirect after 3 seconds
-    Timer(Duration(seconds: 3), () {
+    Timer(Duration(seconds: 15), () {
       Get.offAll(() => DashboardScreen(),
           transition: Transition.fade, arguments: 1);
     });
@@ -38,34 +36,40 @@ class _SuccessScreenState extends State<SuccessScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.check_circle,
-              color: Colors.green,
-              size: 100.h,
+            SizedBox(
+              width: 350.w,
+              height: 350.h,
+              child: Center(
+                child: Image.asset(
+                  'assets/order_paced_gif.gif',
+                  fit: BoxFit.contain,
+                ),
+              ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 30),
             Text('Order Successful!',
                 style: appStyle(24, kDark, FontWeight.normal)),
-            SizedBox(height: 20.h),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    'Ordered Food',
-                    textAlign: TextAlign.center,
-                    style: appStyle(18, kDark, FontWeight.normal),
-                  ),
-                  SizedBox(height: 5),
-                ],
-              ),
-            ),
             SizedBox(height: 30.h),
+            // Container(
+            //   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            //   decoration: BoxDecoration(
+            //     color: Colors.white,
+            //     borderRadius: BorderRadius.circular(10),
+            //   ),
+            //   child: Column(
+            //     crossAxisAlignment: CrossAxisAlignment.stretch,
+            //     children: [
+            //       Text(
+            //         'Ordered Food',
+            //         textAlign: TextAlign.center,
+            //         style: appStyle(18, kDark, FontWeight.normal),
+            //       ),
+            //       SizedBox(height: 5),
+            //     ],
+            //   ),
+            // ),
+            // SizedBox(height: 30.h),
+
             CustomGradientButton(
               text: "Back to History",
               onPress: () {
@@ -81,10 +85,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
 }
 
 
-
-
 // import 'dart:async';
-
 // import 'package:flutter/material.dart';
 // import 'package:flutter_screenutil/flutter_screenutil.dart';
 // import 'package:food_otg/common/custom_gradient_button.dart';
@@ -92,6 +93,7 @@ class _SuccessScreenState extends State<SuccessScreen> {
 // import 'package:food_otg/utils/app_styles.dart';
 // import 'package:food_otg/views/entry_point.dart';
 // import 'package:get/get.dart';
+// import 'package:vibration/vibration.dart'; // Import for vibrating device
 
 // class SuccessScreen extends StatefulWidget {
 //   const SuccessScreen({Key? key}) : super(key: key);
@@ -101,8 +103,11 @@ class _SuccessScreenState extends State<SuccessScreen> {
 // }
 
 // class _SuccessScreenState extends State<SuccessScreen> {
+//   @override
 //   void initState() {
 //     super.initState();
+
+//     Vibration.vibrate(duration: 1000); // Vibrate for 1 second
 //     // Start a timer to automatically redirect after 3 seconds
 //     Timer(Duration(seconds: 3), () {
 //       Get.offAll(() => DashboardScreen(),
@@ -136,23 +141,27 @@ class _SuccessScreenState extends State<SuccessScreen> {
 //               child: Column(
 //                 crossAxisAlignment: CrossAxisAlignment.stretch,
 //                 children: [
-//                   Text('Ordered Food',
-//                       textAlign: TextAlign.center,
-//                       style: appStyle(18, kDark, FontWeight.normal)),
+//                   Text(
+//                     'Ordered Food',
+//                     textAlign: TextAlign.center,
+//                     style: appStyle(18, kDark, FontWeight.normal),
+//                   ),
 //                   SizedBox(height: 5),
 //                 ],
 //               ),
 //             ),
 //             SizedBox(height: 30.h),
 //             CustomGradientButton(
-//                 text: "Back to History",
-//                 onPress: () {
-//                   Get.offAll(() => DashboardScreen(),
-//                       transition: Transition.fade, arguments: 1);
-//                 }),
+//               text: "Back to History",
+//               onPress: () {
+//                 Get.offAll(() => DashboardScreen(),
+//                     transition: Transition.fade, arguments: 1);
+//               },
+//             ),
 //           ],
 //         ),
 //       ),
 //     );
 //   }
 // }
+

@@ -34,7 +34,7 @@ class PhoneAuthenticationScreen extends StatelessWidget {
                             topLeft: Radius.circular(20),
                             topRight: Radius.circular(20)),
                         image: DecorationImage(
-                          image: AssetImage("assets/login_bg_2.jpg"),
+                          image: AssetImage("assets/login_bg.png"),
                           fit: BoxFit.cover,
                         ),
                       ),

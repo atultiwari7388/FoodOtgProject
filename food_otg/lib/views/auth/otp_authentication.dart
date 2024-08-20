@@ -31,10 +31,21 @@ class _OtpAuthenticationScreenState extends State<OtpAuthenticationScreen> {
         backgroundColor: kLightWhite,
         appBar: AppBar(),
         body: controller.isVerification
-            ? Center(
-                child: Lottie.asset(
-                  "assets/anime/bike_delivery.json",
-                  repeat: true,
+            ?
+            // Center(
+            //     child: Lottie.asset(
+            //       "assets/anime/bike_delivery.json",
+            //       repeat: true,
+            //       height: 200,
+            //       width: 240,
+            //       // fit: BoxFit.cover,
+            //     ),
+            //   )
+
+            Center(
+                child: Image.asset(
+                  "assets/login_animation_out_delivery.gif",
+                  // repeat: true,
                   height: 200,
                   width: 240,
                   // fit: BoxFit.cover,

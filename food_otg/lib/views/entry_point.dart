@@ -74,7 +74,6 @@ class DashboardScreen extends StatelessWidget {
     HomeScreen(),
     HistoryScreen(),
     CartScreen(),
-    // ProfileScreen(),
   ];
 
   @override

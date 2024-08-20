@@ -94,6 +94,7 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
   @override
   Widget build(BuildContext context) {
     final orderId = widget.cartItem['orderId'];
+    final managerId = widget.cartItem['managerId'];
     final time = widget.cartItem['time'];
     final dTime = widget.cartItem['dDeliveryTime'];
     final orderTime = DateTime.fromMillisecondsSinceEpoch(
@@ -101,6 +102,7 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
     final location = widget.cartItem['userDeliveryAddress'].split(' ').last;
     final status = widget.cartItem['status'];
     final newStatus = AppServices().getStatusString(status);
+    var itemId = "";
 
     final totalPrice = widget.cartItem['totalBill'];
     final otp = widget.cartItem["otp"] ?? "";
@@ -207,6 +209,9 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
                 itemCount: widget.cartItem['orderItems'].length,
                 itemBuilder: (context, index) {
                   final orderItem = widget.cartItem['orderItems'][index];
+                  final itemIds = orderItem['foodId'];
+                  itemId = itemIds;
+
                   return Column(
                     children: [
                       SizedBox(height: 20.h),
@@ -383,8 +388,8 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
                     ElevatedButton(
                       onPressed: () {
                         // showRatingDialog(booking, context);
-                        AppServices()
-                            .showRatingDialog(orderId, driverId, context);
+                        AppServices().showRatingDialog(orderId, driverId,
+                            context, managerId, widget.cartItem['orderItems']);
                       },
                       child: Text("Leave a Rating"),
                       style: ElevatedButton.styleFrom(

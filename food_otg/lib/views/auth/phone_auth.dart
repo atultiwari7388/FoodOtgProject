@@ -35,7 +35,7 @@ class PhoneAuthenticationScreen extends StatelessWidget {
                             topLeft: Radius.circular(20),
                             topRight: Radius.circular(20)),
                         image: DecorationImage(
-                          image: AssetImage("assets/new_login_bg.png"),
+                          image: AssetImage("assets/login_bg.png"),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -173,10 +173,19 @@ class PhoneAuthenticationScreen extends StatelessWidget {
               ),
             );
           } else {
+            // return Center(
+            //   child: Lottie.asset(
+            //     "assets/anime/bike_delivery.json",
+            //     repeat: true,
+            //     height: 200,
+            //     width: 240,
+            //     // fit: BoxFit.cover,
+            //   ),
+            // );
             return Center(
-              child: Lottie.asset(
-                "assets/anime/bike_delivery.json",
-                repeat: true,
+              child: Image.asset(
+                "assets/login_animation_out_delivery.gif",
+                // repeat: true,
                 height: 200,
                 width: 240,
                 // fit: BoxFit.cover,
