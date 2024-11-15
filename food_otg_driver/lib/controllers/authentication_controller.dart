@@ -32,8 +32,6 @@ class AuthenticationController extends GetxController {
 
   //crate a function for verify phone
 
-//================old code =======================================
-
   void verifyPhoneNumber() async {
     try {
       isLoading = true;

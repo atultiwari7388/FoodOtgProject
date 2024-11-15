@@ -44,11 +44,12 @@ class _OtpAuthenticationScreenState extends State<OtpAuthenticationScreen> {
 
             Center(
                 child: Image.asset(
-                  "assets/login_animation_out_delivery.gif",
+                  "assets/login_out_deliver.gif",
                   // repeat: true,
-                  height: 200,
-                  width: 240,
-                  // fit: BoxFit.cover,
+                  height: MediaQuery.of(context).size.height,
+                  width: double.maxFinite,
+                  // color: Colors.transparent,
+                  fit: BoxFit.cover,
                 ),
               )
             : Container(

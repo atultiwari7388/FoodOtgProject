@@ -15,25 +15,17 @@ class LottieAnimationOverlay extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(20),
-      padding: EdgeInsets.all(20),
       child: Center(
-        child: Lottie.network(
+        child: Lottie.asset(
           animationUrl,
           onLoaded: (composition) {
             Future.delayed(duration, onCompleted);
           },
+          fit: BoxFit.contain,
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
         ),
       ),
-      // child: Center(
-      //   child: Image.asset(animationUrl, fit: BoxFit.contain),
-      // ),
     );
   }
-
-  // ignore: override_on_non_overriding_member
-  // @override
-  // void initState() {
-  //   Future.delayed(duration, onCompleted);
-  // }
 }

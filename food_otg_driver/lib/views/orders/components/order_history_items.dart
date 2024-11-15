@@ -420,8 +420,8 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
   }
 
   Future<void> showDeliveryTimeDialog() async {
-    final TextEditingController _controller = TextEditingController();
-    bool isButtonDisabled = true;
+    final TextEditingController _controller = TextEditingController(text: "10");
+    // bool isButtonDisabled = true;
 
     await showDialog(
       context: context,
@@ -433,7 +433,7 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
             keyboardType: TextInputType.number,
             onChanged: (value) {
               setState(() {
-                isButtonDisabled = value.isEmpty;
+                // isButtonDisabled = value.isEmpty;
               });
             },
             decoration: const InputDecoration(
@@ -450,13 +450,11 @@ class _HistoryScreenItemsState extends State<HistoryScreenItems> {
                   borderRadius: BorderRadius.circular(10.0.r),
                 ),
               ),
-              onPressed: isButtonDisabled
-                  ? null
-                  : () {
-                      String deliveryTime = _controller.text;
-                      Navigator.of(context).pop();
-                      _acceptOrder(deliveryTime);
-                    },
+              onPressed: () {
+                String deliveryTime = _controller.text;
+                Navigator.of(context).pop();
+                _acceptOrder(deliveryTime);
+              },
               child: const Text('Continue'),
             ),
           ],

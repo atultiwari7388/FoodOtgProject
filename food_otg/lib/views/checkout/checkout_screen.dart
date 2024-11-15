@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -564,18 +563,12 @@ class _CheckoutScreenState extends State<CheckoutScreen>
                       ),
           ),
           if (showAnimation)
-            // LottieAnimationOverlay(
-            //     animationUrl: "assets/coupon_found.gif",
-            //     duration: Duration(seconds: 5),
-            //     onCompleted: () {
-            //       setState(() {
-            //         showAnimation = false;
-            //       });
-            //     }),
             LottieAnimationOverlay(
                 animationUrl:
-                    "https://lottie.host/902cff49-10ff-4a25-8660-e30326b71bbb/T2jNAbW1vQ.json",
-                duration: Duration(seconds: 5),
+                    // "https://lottie.host/902cff49-10ff-4a25-8660-e30326b71bbb/T2jNAbW1vQ.json",
+                    "assets/nw_coupon.json",
+                // "assets/no-data-found.json",
+                duration: Duration(seconds: 3),
                 onCompleted: () {
                   setState(() {
                     showAnimation = false;
@@ -795,84 +788,104 @@ class _CheckoutScreenState extends State<CheckoutScreen>
               SizedBox(height: 15.h),
 
               //--------- Address section ------------
-              Row(
-                children: [
-                  Image.asset("assets/house.png", height: 25.h, width: 25.w),
-                  SizedBox(width: 10.w),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      RichText(
-                        text: TextSpan(
-                          text: "Delivery at ",
-                          style: appStyle(13, kDark, FontWeight.normal),
-                          children: [
-                            TextSpan(
-                                text: "$addreeType",
-                                style: appStyle(13, kDark, FontWeight.bold)),
-                          ],
+              InkWell(
+                onTap: () async {
+                  var result = await Get.to(() => AddressManagementScreen(
+                        userLat: userLat!,
+                        userLng: userLong!,
+                      ));
+                  if (result != null) {
+                    setState(() {
+                      address = result["address"];
+                      userLat = result["location"]["latitude"];
+                      userLong = result["location"]["longitude"];
+                    });
+                  }
+                },
+                child: Row(
+                  children: [
+                    Image.asset("assets/house.png", height: 25.h, width: 25.w),
+                    SizedBox(width: 10.w),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            text: "Delivery at ",
+                            style: appStyle(13, kDark, FontWeight.normal),
+                            children: [
+                              TextSpan(
+                                  text: "$addreeType",
+                                  style: appStyle(13, kDark, FontWeight.bold)),
+                            ],
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 220.w,
-                        child: Text("$address",
-                            maxLines: 2,
-                            style: appStyle(12, kGrayLight, FontWeight.normal)),
-                      ),
-                    ],
-                  ),
-                  Spacer(),
-                  IconButton(
-                      onPressed: () async {
-                        var result = await Get.to(() => AddressManagementScreen(
-                              userLat: userLat!,
-                              userLng: userLong!,
-                            ));
-                        if (result != null) {
-                          setState(() {
-                            address = result["address"];
-                            userLat = result["location"]["latitude"];
-                            userLong = result["location"]["longitude"];
-                          });
-                        }
-                      },
-                      icon: Icon(Icons.arrow_forward_ios, size: 20.sp))
-                ],
+                        SizedBox(
+                          width: 220.w,
+                          child: Text("$address",
+                              maxLines: 2,
+                              style:
+                                  appStyle(12, kGrayLight, FontWeight.normal)),
+                        ),
+                      ],
+                    ),
+                    Spacer(),
+                    IconButton(
+                        onPressed: () async {
+                          var result =
+                              await Get.to(() => AddressManagementScreen(
+                                    userLat: userLat!,
+                                    userLng: userLong!,
+                                  ));
+                          if (result != null) {
+                            setState(() {
+                              address = result["address"];
+                              userLat = result["location"]["latitude"];
+                              userLong = result["location"]["longitude"];
+                            });
+                          }
+                        },
+                        icon: Icon(Icons.arrow_forward_ios, size: 20.sp))
+                  ],
+                ),
               ),
 
               SizedBox(height: 15.h),
               DashedDivider(height: 1, color: kGrayLight),
               SizedBox(height: 15.h),
               //------------ Contact Section --------------
-              Row(
-                children: [
-                  Image.asset("assets/phone-call.png",
-                      height: 25.h, width: 25.w),
-                  SizedBox(width: 10.w),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      RichText(
-                        text: TextSpan(
-                          text: "$name",
-                          style: appStyle(13, kDark, FontWeight.normal),
-                          children: [
-                            TextSpan(
-                                text: "$phoneNumber",
-                                style: appStyle(13, kDark, FontWeight.bold)),
-                          ],
+              InkWell(
+                onTap: () {},
+                child: Row(
+                  children: [
+                    Image.asset("assets/phone-call.png",
+                        height: 25.h, width: 25.w),
+                    SizedBox(width: 10.w),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            text: "$name",
+                            style: appStyle(13, kDark, FontWeight.normal),
+                            children: [
+                              TextSpan(
+                                  text: "$phoneNumber",
+                                  style: appStyle(13, kDark, FontWeight.bold)),
+                            ],
+                          ),
                         ),
-                      ),
-                      ReusableText(
-                          text: "Cannot be changed for this order",
-                          style: appStyle(12, kGrayLight, FontWeight.normal)),
-                    ],
-                  ),
-                  Spacer(),
-                  IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.arrow_forward_ios, size: 20.sp))
-                ],
+                        ReusableText(
+                            text: "Cannot be changed for this order",
+                            style: appStyle(12, kGrayLight, FontWeight.normal)),
+                      ],
+                    ),
+                    Spacer(),
+                    // IconButton(
+                    //     onPressed: () {},
+                    //     icon: Icon(Icons.arrow_forward_ios, size: 20.sp))
+                  ],
+                ),
               ),
               SizedBox(height: 15.h),
               DashedDivider(height: 1, color: kGrayLight),

@@ -35,7 +35,7 @@ class EmailAuthenticationScreen extends StatelessWidget {
                             topRight: Radius.circular(20)),
                         image: DecorationImage(
                           image: AssetImage("assets/login_bg.png"),
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                         ),
                       ),
                     ),

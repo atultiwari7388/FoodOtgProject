@@ -27,7 +27,7 @@ class PhoneAuthenticationScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   // Image or App Logo
-                  Expanded(
+                  Flexible(
                     flex: 1,
                     child: Container(
                       decoration: BoxDecoration(
@@ -36,7 +36,7 @@ class PhoneAuthenticationScreen extends StatelessWidget {
                             topRight: Radius.circular(20)),
                         image: DecorationImage(
                           image: AssetImage("assets/login_bg.png"),
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                         ),
                       ),
                     ),
@@ -184,11 +184,12 @@ class PhoneAuthenticationScreen extends StatelessWidget {
             // );
             return Center(
               child: Image.asset(
-                "assets/login_animation_out_delivery.gif",
+                "assets/login_out_deliver.gif",
                 // repeat: true,
-                height: 200,
-                width: 240,
-                // fit: BoxFit.cover,
+                height: MediaQuery.of(context).size.height,
+                width: double.maxFinite,
+                // color: Colors.transparent,
+                fit: BoxFit.cover,
               ),
             );
           }

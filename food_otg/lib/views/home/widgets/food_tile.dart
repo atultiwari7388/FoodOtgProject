@@ -47,6 +47,20 @@ class _FoodTileWidgetState extends State<FoodTileWidget> {
   double? addOnPrice;
   double finalPrice = 0.0;
 
+  List<DocumentSnapshot>? _addOnDocuments;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.food.containsKey("addOns")) {
+      _fetchAddOnsData(widget.food["addOns"]).then((docs) {
+        setState(() {
+          _addOnDocuments = docs;
+        });
+      });
+    }
+  }
+
   set selectedSizeIndex(int index) {
     _selectedSizeIndex = index;
     setState(() {});
@@ -629,9 +643,6 @@ class _FoodTileWidgetState extends State<FoodTileWidget> {
                         "Size",
                         style: appStyle(18, kDark, FontWeight.normal),
                       ),
-                      // Text(
-                      //     "₹${double.parse(widget.food["price"].toStringAsFixed(1))}",
-                      //     style: appStyle(14, kSecondary, FontWeight.bold))
                     ],
                   ),
                   ReusableText(
@@ -760,52 +771,38 @@ class _FoodTileWidgetState extends State<FoodTileWidget> {
 
   Widget _buildAddOnCard(BuildContext context, setState) {
     if (widget.food.containsKey("addOns")) {
-      List<dynamic> addOnIds = widget.food["addOns"];
+      if (_addOnDocuments == null) {
+        return Container(); // Return empty container while loading
+      }
 
-      return FutureBuilder<List<DocumentSnapshot>>(
-        future: _fetchAddOnsData(addOnIds),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
-          } else if (snapshot.hasError) {
-            return Text('Error: ${snapshot.error}');
-          } else {
-            List<DocumentSnapshot> addOnDocuments = snapshot.data!;
-            return Card(
-              child: Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Add On",
-                        style: appStyle(16, kDark, FontWeight.normal)),
-                    ReusableText(
-                        text: "Select any 1 option",
-                        style: appStyle(13, kGray, FontWeight.w500)),
-                    Column(
-                      children: addOnDocuments.map<Widget>((document) {
-                        final addOnData =
-                            document.data() as Map<String, dynamic>;
-                        final title = addOnData["name"];
-                        // addOnPrice = addOnData["price"];
-                        final price = addOnData["price"];
-                        double foodPrice =
-                            double.parse(widget.food["price"].toString());
-                        final isSelected = selectedAddOns.contains(title);
-                        log("Add On Price : " + price.toString());
-                        return _buildAddonTile(
-                            title, price!, foodPrice, isSelected, setState);
-                      }).toList(),
-                    ),
-                  ],
-                ),
+      return Card(
+        child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Add On", style: appStyle(16, kDark, FontWeight.normal)),
+              ReusableText(
+                  text: "Select any 1 option",
+                  style: appStyle(13, kGray, FontWeight.w500)),
+              Column(
+                children: _addOnDocuments!.map<Widget>((document) {
+                  final addOnData = document.data() as Map<String, dynamic>;
+                  final title = addOnData["name"];
+                  final price = addOnData["price"];
+                  double foodPrice =
+                      double.parse(widget.food["price"].toString());
+                  final isSelected = selectedAddOns.contains(title);
+                  return _buildAddonTile(
+                      title, price!, foodPrice, isSelected, setState);
+                }).toList(),
               ),
-            );
-          }
-        },
+            ],
+          ),
+        ),
       );
     } else {
-      return SizedBox(); // Placeholder for when there are no addons
+      return SizedBox();
     }
   }
 
@@ -833,7 +830,6 @@ class _FoodTileWidgetState extends State<FoodTileWidget> {
       ),
       subtitle: Text(
         "₹${price.toString()}",
-        // "₹${(foodPrice + price).toStringAsFixed(1)}",
         style: appStyle(12, kGray, FontWeight.normal),
       ),
       trailing: Checkbox(

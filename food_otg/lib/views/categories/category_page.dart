@@ -13,8 +13,9 @@ class CategoryPage extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         backgroundColor: kOffWhite,
-        title: Text(categoryName, style: AppFontStyles.font18Style
-            .copyWith(color: kGray, fontWeight: FontWeight.bold)),
+        title: Text(categoryName,
+            style: AppFontStyles.font18Style
+                .copyWith(color: kGray, fontWeight: FontWeight.bold)),
       ),
     );
   }
