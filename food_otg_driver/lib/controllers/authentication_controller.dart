@@ -9,6 +9,7 @@ import '../views/auth/otp_controller.dart';
 import '../views/auth/personal_details_screen.dart';
 import '../views/auth/phone_authentication_screen.dart';
 import '../views/dashboard/dashboard_screen.dart';
+import 'package:sms_autofill/sms_autofill.dart';
 
 class AuthenticationController extends GetxController {
   //create firebase instance
@@ -31,14 +32,26 @@ class AuthenticationController extends GetxController {
   User get user => _auth.currentUser!;
 
   //crate a function for verify phone
-
   void verifyPhoneNumber() async {
     try {
       isLoading = true;
       update();
+
+      // Get app signature for SMS auto-fill
+      final appSignature = await SmsAutoFill().getAppSignature;
+      log("App Signature: $appSignature");
+
       await _auth.verifyPhoneNumber(
           phoneNumber: "+91${phoneController.text}",
-          verificationCompleted: (PhoneAuthCredential credential) async {},
+          verificationCompleted: (PhoneAuthCredential credential) async {
+            // Auto-retrieve the SMS code
+            log("Auto retrieving verification code");
+
+            // Sign in when OTP is automatically detected
+            await _auth.signInWithCredential(credential);
+            isVerification = false;
+            update();
+          },
           timeout: const Duration(seconds: 120),
           verificationFailed: (FirebaseAuthException exception) {
             if (exception.code == 'invalid-phone-number') {
@@ -47,20 +60,19 @@ class AuthenticationController extends GetxController {
             log(exception.toString());
           },
           codeSent: (String _verificationId, int? forcedRespondToken) {
-            // showToastMessage("Success", "verified code sent", Colors.green);
             vid = _verificationId;
-            log(vid);
+            log("Verification ID: $vid");
             isLoading = false;
             update();
-            Get.to(
-                () => OtpAuthenticationScreen(verificationId: _verificationId));
+
+            // Use phone_authentication_screen.dart version to avoid conflict
+            Get.to(() => OtpAuthenticationScreen(verificationId: vid));
+
             isLoading = false;
             update();
           },
           codeAutoRetrievalTimeout: (String e) {
-            // showToastMessage("Error", e.toString(), Colors.red);
             log("Time out Error $e");
-
             return null;
           });
     } catch (e) {
@@ -71,8 +83,6 @@ class AuthenticationController extends GetxController {
   }
 
   //for sign in
-//========================== Old Code ==========================================
-
   void signInWithPhoneNumber(BuildContext context, String otp) async {
     isVerification = true;
     update();

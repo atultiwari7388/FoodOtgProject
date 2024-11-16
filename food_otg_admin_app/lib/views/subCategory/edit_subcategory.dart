@@ -44,6 +44,12 @@ class _EditSubCategoryScreenState extends State<EditSubCategoryScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Edit Sub Category Screen"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete, color: Colors.red),
+            onPressed: () => _showDeleteConfirmation(context),
+          )
+        ],
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -102,6 +108,65 @@ class _EditSubCategoryScreenState extends State<EditSubCategoryScreen> {
     );
   }
 
+  void _showDeleteConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Delete Sub Category"),
+          content: Text("Are you sure you want to delete this sub category?"),
+          actions: [
+            TextButton(
+              child: Text("Cancel"),
+              onPressed: () => Navigator.pop(context),
+            ),
+            TextButton(
+              child: Text("Delete", style: TextStyle(color: Colors.red)),
+              onPressed: () {
+                Navigator.pop(context);
+                _deleteSubCategory();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _deleteSubCategory() async {
+    try {
+      // Delete the image from storage if it exists
+      if (_currentImageUrl != null) {
+        try {
+          final ref = FirebaseStorage.instance.refFromURL(_currentImageUrl!);
+          await ref.delete();
+        } catch (e) {
+          log("Error deleting image: $e");
+        }
+      }
+
+      // Delete the document from Firestore
+      await FirebaseFirestore.instance
+          .collection("SubCategories")
+          .doc(widget.subCatId)
+          .delete();
+
+      showToastMessage(
+        "Success",
+        "Sub Category deleted successfully!",
+        Colors.green,
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      log("Error deleting sub category: $e");
+      showToastMessage(
+        "Error",
+        "Failed to delete sub category",
+        Colors.red,
+      );
+    }
+  }
+
   void _updateCategoryToFirebase() async {
     String subCatName = _subCatNameController.text;
     int priority = int.tryParse(_priorityController.text) ?? 0;
@@ -158,6 +223,4 @@ class _EditSubCategoryScreenState extends State<EditSubCategoryScreen> {
       });
     }
   }
-
-
 }

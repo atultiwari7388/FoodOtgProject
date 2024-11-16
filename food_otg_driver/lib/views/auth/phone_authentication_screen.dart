@@ -6,9 +6,42 @@ import '../../constants/constants.dart';
 import '../../controllers/authentication_controller.dart';
 import '../../utils/app_style.dart';
 import '../../utils/toast_msg.dart';
+import 'dart:async';
+import 'dart:developer';
+import 'package:another_telephony/telephony.dart';
+import '../../common/reusable_text.dart';
 
-class PhoneAuthenticationScreen extends StatelessWidget {
+class PhoneAuthenticationScreen extends StatefulWidget {
   const PhoneAuthenticationScreen({Key? key}) : super(key: key);
+
+  @override
+  State<PhoneAuthenticationScreen> createState() =>
+      _PhoneAuthenticationScreenState();
+}
+
+class _PhoneAuthenticationScreenState extends State<PhoneAuthenticationScreen> {
+  final Telephony telephony = Telephony.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _getPhoneNumber();
+  }
+
+  Future<void> _getPhoneNumber() async {
+    try {
+      bool? permissionsGranted = await telephony.requestPhoneAndSmsPermissions;
+      if (permissionsGranted ?? false) {
+        final controller = Get.find<AuthenticationController>();
+        // Use telephony.dialNumber() instead of getSimStateData
+        await telephony.openDialer(""); // Opens dialer without number
+        // Note: We can't directly get phone number due to platform limitations
+        // User will need to enter number manually
+      }
+    } catch (e) {
+      log("Error getting phone number: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,48 +77,36 @@ class PhoneAuthenticationScreen extends StatelessWidget {
                   Expanded(
                     flex: 1,
                     child: Column(
-                      // mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        // Heading
                         SizedBox(height: 7.h),
                         Text("Welcome to FOODOTG\n Driver",
                             textAlign: TextAlign.center,
                             style: appStyle(19, kDark, FontWeight.bold)),
-                        // Login or Signup Text
                         SizedBox(height: 7.h),
-                        // Login or Signup Text
                         Padding(
                           padding: EdgeInsets.only(left: 15.w, right: 15.w),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
-                            // Center the children horizontally
                             children: [
-                              Expanded(
-                                child: Divider(), // Divider on the left
-                              ),
+                              Expanded(child: Divider()),
                               Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 8.0),
-                                // Adjust the padding as needed
                                 child: Text(
                                   "Login or Signup",
                                   textAlign: TextAlign.center,
                                   style: appStyle(14, kGray, FontWeight.w400),
                                 ),
                               ),
-                              Expanded(
-                                child: Divider(), // Divider on the right
-                              ),
+                              Expanded(child: Divider()),
                             ],
                           ),
                         ),
-
                         SizedBox(height: 20.h),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 16.0),
                           child: Row(
                             children: [
-                              // Indian Flag Symbol
                               Container(
                                 decoration: BoxDecoration(
                                     border: Border.all(color: kGrayLight),
@@ -95,9 +116,7 @@ class PhoneAuthenticationScreen extends StatelessWidget {
                                 child: Container(
                                   padding:
                                       EdgeInsets.only(left: 4.w, right: 7.w),
-                                  // Add padding for spacing around the image
                                   alignment: Alignment.center,
-                                  // Center the image within its container
                                   child: Image.asset(
                                     "assets/india.png",
                                     width: 40.w,
@@ -105,9 +124,7 @@ class PhoneAuthenticationScreen extends StatelessWidget {
                                   ),
                                 ),
                               ),
-
-                              SizedBox(width: 16.w), // Horizontal Space
-
+                              SizedBox(width: 16.w),
                               Expanded(
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
@@ -128,7 +145,9 @@ class PhoneAuthenticationScreen extends StatelessWidget {
                                     child: TextFormField(
                                       controller: controller.phoneController,
                                       keyboardType: TextInputType.number,
+                                      maxLength: 10,
                                       decoration: InputDecoration(
+                                          counterText: "",
                                           border: InputBorder.none,
                                           hintText: "  Enter your phone number",
                                           prefixText: " ",
@@ -144,7 +163,7 @@ class PhoneAuthenticationScreen extends StatelessWidget {
                         SizedBox(height: 40.h),
                         CustomGradientButton(
                             text: "Continue",
-                            onPress: () {
+                            onPress: () async {
                               if (controller.phoneController.text.length ==
                                   10) {
                                 controller.verifyPhoneNumber();
@@ -158,7 +177,6 @@ class PhoneAuthenticationScreen extends StatelessWidget {
                             },
                             h: 45.h,
                             w: 350.w),
-                        // SizedBox(height: 20.h),
                         Spacer(),
                         SizedBox(
                           width: 260.w,

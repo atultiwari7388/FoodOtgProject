@@ -33,6 +33,7 @@ dependencies:
   flutter_screenutil:
   logger:
   sms_autofill: ^2.4.1
+  another_telephony: ^0.3.0
 
 dev_dependencies:
   flutter_test:
