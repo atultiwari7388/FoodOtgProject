@@ -1,0 +1,124 @@
+{
+  "project_info": {
+    "project_number": "798843974680",
+    "project_id": "food-otg-service-app",
+    "storage_bucket": "food-otg-service-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:798843974680:android:61129b210df948d526ff6d",
+        "android_client_info": {
+          "package_name": "com.example.food_otg_2025"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhbMqkat640yYs1KYVRd0y191rToC164g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:798843974680:android:f765d2ad0b274b4d26ff6d",
+        "android_client_info": {
+          "package_name": "com.food_otg_service.admin_web_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhbMqkat640yYs1KYVRd0y191rToC164g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:798843974680:android:b7ef06e7852fd5e226ff6d",
+        "android_client_info": {
+          "package_name": "com.food_otg_service.driver_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhbMqkat640yYs1KYVRd0y191rToC164g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:798843974680:android:eb81eafc33c8745926ff6d",
+        "android_client_info": {
+          "package_name": "com.food_otg_service.manager_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhbMqkat640yYs1KYVRd0y191rToC164g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:798843974680:android:69aa97d8b447604426ff6d",
+        "android_client_info": {
+          "package_name": "com.food_otg_service.second_driver_testing"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhbMqkat640yYs1KYVRd0y191rToC164g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:798843974680:android:5d3076756e49e64d26ff6d",
+        "android_client_info": {
+          "package_name": "com.foodotg_service.custom_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBhbMqkat640yYs1KYVRd0y191rToC164g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
